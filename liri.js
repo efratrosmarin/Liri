@@ -1,40 +1,132 @@
 require("dotenv").config();
 var keys = require ("./keys.js");
-
 var Twitter = require("twitter");
 var Spotify = require('node-spotify-api');
-
 var spotify = new Spotify(keys.spotify);
 var client = new Twitter(keys.twitter);
+var request = require('request');
 
 
-// console.log(process.env.SPOTIFY_CLIENTID)
-// console.log(process.env.SPOTIFY_CLIENTSECRET)
-
-// console.log(process.env.TWITTER_CONSUMER_KEY)
-// console.log(process.env.TWITTER_CONSUMER_SECRET)
-// console.log(process.env.TWITTER_ACCESS_TOKEN_KEY)
-// console.log(process.env.TWITTER_ACCESS_TOKEN_SECRET)
-
+var myTweets = function(){
 
 var params = {screen_name: 'efratrosmarin'};
 client.get('statuses/user_timeline', params, function(error, tweets, response) {
   if (!error) {
-    console.log(tweets);
-  }
-});
+    // console.log(tweets);
+ for (var i = 0; i<tweets.length; i++){
+
+  console.log(tweets[i].created_at);
+  console.log('');
+  console.log(tweets[i].text);
+      }
+    }
+ });
+}
+ 
+var getArtistName = function(artist){
+  return artist.name;
+}
 
 
+var getMySpotify = function(songName){
  
-var spotify = new Spotify({
-  id: process.env.SPOTIFY_CLIENTID,
-  secret: process.env.SPOTIFY_CLIENTSECRET
-});
- 
-spotify.search({ type: 'track', query: 'All the Small Things' }, function(err, data) {
-  if (err) {
-    return console.log('Error occurred: ' + err);
+      spotify.search({ type: 'track', query: songName }, function(err, data) {
+      if (err) {
+      return console.log('Error occurred: ' + err);
+    }
+
+    var songs = data.tracks.items;
+    for (var i =0; i<songs.length; i++){
+
+      console.log(i);
+      console.log(songs[i].name);
+      console.log(songs[i].preview_url);
+      console.log(songs[i].album.name);
+      console.log('------------------------');
+
+    }
+  
+      
+    });
+
+}
+
+var getMyMovie = function(movieName){
+
+
+
+var request = require("request");
+
+request("http://www.omdbapi.com/?t="+ movieName+"&y=&plot=short&apikey=trilogy", function(error, response, body) {
+
+  if (!error && response.statusCode === 200) {
+
+    console.log("Tile: " + 
+    JSON.parse(body).Title);
+    console.log("Year: " + 
+    JSON.parse(body).Year);
+    console.log("The movie's rating is: " + 
+    JSON.parse(body).imdbRating);
+    console.log("Rotten Tomatoes Rating: " + 
+    JSON.parse(body).Ratings.Source);
+    console.log("Produced: " + 
+    JSON.parse(body).Production);
+    console.log("Language: " + 
+    JSON.parse(body).Language);
+    console.log("Plot: " + 
+    JSON.parse(body).Plot);
+    console.log("Actors: " + 
+    JSON.parse(body).Actors);
+    
   }
- 
-console.log(data); 
+  
 });
+
+}
+var fs = require("fs");
+
+
+
+fs.readFile("random.txt", "utf8", function(error, data) {
+
+  if (error) {
+    return console.log(error);
+  }
+
+  console.log(data);
+
+  var dataArr = data.split(",");
+
+  console.log(dataArr);
+
+});
+
+ 
+
+
+var pick = function(caseData, functionData){
+    switch(caseData){
+    case 'my-tweets':
+      myTweets(functionData);
+      break;
+    case 'spotify-this-song':
+      getMySpotify(functionData);
+      break;
+
+      case 'movie-this':
+      getMyMovie(functionData);
+    
+
+    default:
+console.log ("Liri doesn't know that");
+
+  }
+
+}
+
+var runThis = function(argOne, argTwo){
+
+  pick(argOne, argTwo);
+};
+
+runThis(process.argv[2], process.argv[3]);
