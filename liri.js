@@ -85,8 +85,6 @@ request("http://www.omdbapi.com/?t="+ movieName+"&y=&plot=short&apikey=trilogy",
 }
 var fs = require("fs");
 
-
-
 fs.readFile("random.txt", "utf8", function(error, data) {
 
   if (error) {
@@ -101,7 +99,15 @@ fs.readFile("random.txt", "utf8", function(error, data) {
 
 });
 
- 
+
+doWhatItSays = function(data) {
+  fs.appendFile('log.txt', JSON.stringify(data, null, 2) + '\n====================================================================================', function(err) {
+    if(err) {
+      console.log(err);
+    }
+  });
+}
+
 
 
 var pick = function(caseData, functionData){
@@ -112,9 +118,11 @@ var pick = function(caseData, functionData){
     case 'spotify-this-song':
       getMySpotify(functionData);
       break;
-
-      case 'movie-this':
+    case 'movie-this':
       getMyMovie(functionData);
+      case 'do-what-it-says':
+      doWhatItSays(functionData);
+    
     
 
     default:
@@ -124,9 +132,11 @@ console.log ("Liri doesn't know that");
 
 }
 
-var runThis = function(argOne, argTwo){
+// var runThis = function(argOne, argTwo){
 
-  pick(argOne, argTwo);
-};
+//   pick(argOne, argTwo);
+// };
 
-runThis(process.argv[2], process.argv[3]);
+// runThis
+
+(process.argv[2], process.argv[3]);
